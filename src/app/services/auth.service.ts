@@ -8,6 +8,7 @@ import { Firestore, collection, addDoc, getFirestore } from '@angular/fire/fires
 import { Store } from '@ngrx/store';
 import { Auth, authState } from '@angular/fire/auth';
 import { DocumentData, getDocsFromServer } from 'firebase/firestore'; //SOLUCIÓN 1 initAuthListener
+import * as ingresoEgresoActions from '../ingreso-egreso/ingreso-egreso.actions';
 //import { doc, getDoc } from 'firebase/firestore'; //SOLUCIÓN 2 initAuthListener
 
 @Injectable({
@@ -16,6 +17,11 @@ import { DocumentData, getDocsFromServer } from 'firebase/firestore'; //SOLUCIÓ
 export class AuthService {
 
   //userId!: string;//Se utiliza en la SOLUCION 2
+  private _userId!: string | undefined; //Sólo se usa para lectura. si se quisiera grabar, se necesitarían acciones
+
+  get userId(){     
+    return this._userId; 
+  }
 
   constructor(public auth: AngularFireAuth, private firestore: Firestore, private store: Store<AppState>, private auth2: Auth) {}
 
@@ -58,10 +64,11 @@ export class AuthService {
       //console.log("userInfo ", userInfo);
       const db = getFirestore();
       //console.log("1");
-      const userId = res?.uid;
+      //const userId = res?.uid; //Modificado para la clase 99
+      this._userId = res?.uid;
       //console.log("userId", userId);
       //console.log("2");
-      if (userId != undefined){
+      if (this._userId != undefined){
         const docRef = collection(db, 'user');
         //console.log("3");
         //console.log("docRef", docRef);
@@ -81,7 +88,7 @@ export class AuthService {
           //console.log("elemento", elemento);
           //console.log("res['uid']", res['uid']);
           //console.log("8");
-          return res['uid'] === userId;        
+          return res['uid'] ===this._userId;        
         });
         //console.log("elemento final", elemento-1); //esta es ka posición del documento
         //console.log("documento", preds.docs[elemento-1].id);
@@ -92,13 +99,15 @@ export class AuthService {
         if (userInfo != null && idDoc != null){
           //console.log("SetUser");
           const user = Usuario.fromFirebase({ uid: userInfo[0]['uid'], email: userInfo[0]['email'], nombre: userInfo[0]['nombre']});
-          this.store.dispatch(authActions.setUser({ user }));        
+          this.store.dispatch(authActions.setUser({ user }));                  
         }
         //console.log("userInfo", userInfo);
       }
       else{
         //console.log("unSetUser");
+        this._userId = undefined;
         this.store.dispatch(authActions.unSetUser());        
+        this.store.dispatch( ingresoEgresoActions.unSetItems() );
       }
       //console.log("userInfo", userInfo);
     });
