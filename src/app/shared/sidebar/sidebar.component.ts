@@ -24,16 +24,16 @@ export class SidebarComponent implements OnInit, OnDestroy{
       // .pipe(
       //   filter( ({ user }) =>  user != null )
       // )
-      .subscribe( ({ user }) => this.nombre = user?.nombre);
+      .subscribe( ({ user }) => this.nombre = user?.nombre);      
   }
 
-  logout() {
+  logout() {    
     this.autService.logout().then( () => {
       this.router.navigate(['/login']);
     });    
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy(): void {    
     this.userSubs.unsubscribe();
   }
 }

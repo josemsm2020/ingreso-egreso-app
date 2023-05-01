@@ -32,8 +32,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.ingresoEgresoSubs.unsubscribe();
-    this.userSubs.unsubscribe();//Para evitar fugas de memoria y cuando ya no me interese estar escuchando ese observable o esta subscripción hay cancelo        
+    this.ingresoEgresoSubs?.unsubscribe();
+    this.userSubs?.unsubscribe();//Para evitar fugas de memoria y cuando ya no me interese estar escuchando ese observable o esta subscripción hay cancelo        
     console.log("ngondestroy dashboard");
   }
 }

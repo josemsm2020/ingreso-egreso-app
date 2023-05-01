@@ -7,12 +7,16 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { dashboardRoutes } from "./dashboard/dashboard.routes";
 
 
+
 const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
-    { path: '', component: DashboardComponent, children: dashboardRoutes, canActivate: [ AuthGuard] },
+    { path: '', 
+      //canActivate: [ AuthGuard],
+      canLoad: [AuthGuard],
+      loadChildren: () => import('./ingreso-egreso/ingreso-egreso.module').then( m => m.IngresoEgresoModule)
+    },
     { path: '**', redirectTo: '' },
-
 ];
 
 @NgModule({
